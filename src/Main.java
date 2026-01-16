@@ -1,13 +1,35 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+import data.PostgresDB;
+import data.interfaces.IDB;
+import java.sql.Connection;
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("🔍 Testing database connection...\n");
+        
+        IDB db = new PostgresDB();
+        
+        try {
+            Connection connection = db.getConnection();
+            
+            if (connection != null && !connection.isClosed()) {
+                System.out.println("✅ Connection is ACTIVE and WORKING!");
+                System.out.println("🎉 You are ready to proceed with the project!\n");
+                
+                // Close the connection after testing
+                connection.close();
+                System.out.println("Connection closed.");
+            } else {
+                System.out.println("❌ Connection failed - returned null");
+            }
+            
+        } catch (ClassNotFoundException e) {
+            System.out.println("❌ ERROR: PostgreSQL driver not found!");
+            System.out.println("   Please add postgresql-42.x.x.jar to your project libraries");
+            e.printStackTrace();
+            
+        } catch (Exception e) {
+            System.out.println("❌ ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
