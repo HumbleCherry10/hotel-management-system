@@ -1,55 +1,38 @@
-DROP TABLE IF EXISTS rooms;
+package data;
 
-CREATE TABLE rooms (
-    id SERIAL PRIMARY KEY,
-    room_number INT UNIQUE NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    rooms_count INT NOT NULL,
-    description TEXT,
-    price DOUBLE PRECISION NOT NULL,
-    is_occupied BOOLEAN DEFAULT FALSE
-);
+import data.interfaces.IDB;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-INSERT INTO rooms (room_number, type, rooms_count, description, price, is_occupied) VALUES
--- Standard
-(101, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(102, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(103, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(104, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(105, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(106, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(201, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(202, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(203, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(204, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(205, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(206, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(301, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(302, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(303, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(304, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(305, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(306, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(401, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(402, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(403, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(404, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(405, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-(406, 'Standard', 1, '1 спальня + санузел + душ', 15000, true),
-
--- Premium
-(501, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(502, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(503, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(601, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(602, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(603, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(701, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(702, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(703, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(801, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(802, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-(803, 'Premium', 2, '2 спальни + санузел + душ', 30000, true),
-
--- VIP
-(999, 'VIP', 6, '6 комнаты + 2 санузел + 2 душ', 75000, true);
+public class PostgresDB implements IDB {
+    
+    // ⚠️ ИЗМЕНИ ЭТИ ЗНАЧЕНИЯ НА СВОИ:
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/hotel_db";  // CHANGE: имя БД
+    private static final String DB_USER = "postgres";                                   // CHANGE: пользователь
+    private static final String DB_PASSWORD = "0000";                                   // CHANGE: пароль
+    private static final String DB_DRIVER = "org.postgresql.Driver";
+    
+    @Override
+    public Connection getConnection() throws SQLException, ClassNotFoundException {
+        try {
+            // Load the PostgreSQL driver
+            Class.forName(DB_DRIVER);
+            
+            // Create and return connection
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            System.out.println("✅ Successfully connected to PostgreSQL database!");
+            return connection;
+            
+        } catch (ClassNotFoundException e) {
+            System.out.println("❌ PostgreSQL Driver not found: " + e.getMessage());
+            System.out.println("Make sure postgresql-42.x.x.jar is added to your project libraries!");
+            throw e;
+            
+        } catch (SQLException e) {
+            System.out.println("❌ Database connection failed: " + e.getMessage());
+            System.out.println("Check your DB_URL, DB_USER, and DB_PASSWORD!");
+            throw e;
+        }
+    }
+}
